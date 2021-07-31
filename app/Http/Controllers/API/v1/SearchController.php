@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use App\Http\Requests\SearchRequest;
 
 class SearchController extends Controller
 {
-    public function repositories(Request $request)
+    public function repositories(SearchRequest $request)
     {
-        $response = [
-            'success' => true,
-            'message' => "Welcome to API version 1",
-        ];
+        $endpoint =  sprintf( config('services.github.repos_search_uri').'?%s', $request->toQueryString());
+        $response = Http::get($endpoint);
 
-        return response()->json($response, 200);
+        // we can use mapper here to return specific data
+        return json_decode((string) $response->body());
     }
 }
